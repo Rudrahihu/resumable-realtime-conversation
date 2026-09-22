@@ -1,0 +1,615 @@
+/* ---------------------------------------------------------------
+   Design tokens
+   --------------------------------------------------------------- */
+:root {
+  --paper: #fbfbfa;
+  --surface: #ffffff;
+  --raised: #f2f2f0;
+  --hairline: #e4e3df;
+  --hairline-strong: #d6d5d0;
+  --ink: #12151c;
+  --ink-soft: #3d434e;
+  --muted: #6c7280;
+  --signal: #0f766e;
+  --signal-ink: #ffffff;
+  --signal-wash: rgba(15, 118, 110, 0.09);
+  --alert: #b23c17;
+  --alert-wash: rgba(178, 60, 23, 0.08);
+  --warn: #9a6700;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --shadow-composer: 0 -1px 0 var(--hairline);
+  --shadow-lift: 0 1px 2px rgba(18, 21, 28, 0.06), 0 6px 20px rgba(18, 21, 28, 0.06);
+
+  --step: 4px;
+  --col: 46rem;
+
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e1014;
+    --surface: #14171d;
+    --raised: #1b1f27;
+    --hairline: #262b34;
+    --hairline-strong: #333944;
+    --ink: #eceef2;
+    --ink-soft: #c3c8d2;
+    --muted: #8b93a1;
+    --signal: #2dd4bf;
+    --signal-ink: #06231f;
+    --signal-wash: rgba(45, 212, 191, 0.12);
+    --alert: #f08b6a;
+    --alert-wash: rgba(240, 139, 106, 0.1);
+    --warn: #e2b45e;
+    --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Reset
+   --------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--signal-wash);
+}
+
+/* ---------------------------------------------------------------
+   Shell
+   --------------------------------------------------------------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* dvh keeps the composer above mobile browser chrome */
+  height: 100dvh;
+}
+
+.masthead {
+  flex: none;
+  border-bottom: 1px solid var(--hairline);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  backdrop-filter: saturate(1.6) blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.masthead__inner {
+  width: 100%;
+  max-width: var(--col);
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.masthead__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------
+   Connection indicator
+   --------------------------------------------------------------- */
+.status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
+  transition: border-color 220ms var(--ease), color 220ms var(--ease),
+    background-color 220ms var(--ease);
+}
+
+.status__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+  position: relative;
+}
+
+.status--live {
+  color: var(--signal);
+  border-color: color-mix(in srgb, var(--signal) 32%, var(--hairline));
+  background: var(--signal-wash);
+}
+
+/* A halo that expands and fades — reads as an open, healthy stream. */
+.status--live .status__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: halo 2.6s var(--ease) infinite;
+}
+
+.status--pending {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 30%, var(--hairline));
+}
+
+.status--pending .status__dot {
+  animation: blink 1.1s ease-in-out infinite;
+}
+
+.status--down {
+  color: var(--muted);
+}
+
+.status--error {
+  color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 32%, var(--hairline));
+  background: var(--alert-wash);
+}
+
+@keyframes halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Transcript
+   --------------------------------------------------------------- */
+.transcript {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.transcript__inner {
+  width: 100%;
+  max-width: var(--col);
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* --- empty state --- */
+.blank {
+  margin: auto 0;
+  padding: 64px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.blank__mark {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline-strong);
+  display: grid;
+  place-items: center;
+  color: var(--signal);
+}
+
+.blank__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+.blank__body {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* --- messages --- */
+.turn {
+  display: flex;
+  animation: enter 320ms var(--ease) both;
+}
+
+.turn--user {
+  justify-content: flex-end;
+}
+
+.turn--assistant {
+  justify-content: flex-start;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The person's own words are the object: a solid, contained bubble. */
+.bubble {
+  max-width: min(78%, 34rem);
+  padding: 10px 14px;
+  border-radius: var(--radius-lg) var(--radius-lg) 6px var(--radius-lg);
+  background: var(--signal);
+  color: var(--signal-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  letter-spacing: -0.006em;
+  box-shadow: var(--shadow-lift);
+}
+
+/* The reply is the content of the page, so it isn't boxed at all —
+   just set flush left with a quiet rule to mark where it begins. */
+.reply {
+  max-width: 100%;
+  padding-left: 15px;
+  border-left: 2px solid var(--hairline-strong);
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  transition: border-color 260ms var(--ease);
+}
+
+.reply--live {
+  border-left-color: var(--signal);
+}
+
+.reply--failed {
+  border-left-color: var(--alert);
+}
+
+.reply__note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--alert);
+  font-size: 13px;
+}
+
+.reply__waiting {
+  display: inline-flex;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.reply__waiting span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: breathe 1.3s ease-in-out infinite;
+}
+
+.reply__waiting span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.reply__waiting span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+@keyframes breathe {
+  0%,
+  60%,
+  100% {
+    opacity: 0.28;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+/* Caret marking the live edge of the stream. */
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.16em;
+  background: var(--signal);
+  animation: caret 1s steps(2, start) infinite;
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* --- interruption notice --- */
+.notice {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  animation: enter 320ms var(--ease) both;
+}
+
+/* ---------------------------------------------------------------
+   Composer
+   --------------------------------------------------------------- */
+.composer {
+  flex: none;
+  border-top: 1px solid var(--hairline);
+  background: var(--paper);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.composer__inner {
+  width: 100%;
+  max-width: var(--col);
+  margin: 0 auto;
+  padding: 14px 20px 18px;
+}
+
+.field {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 7px 7px 7px 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+
+.field:hover {
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--hairline-strong));
+}
+
+.field:focus-within {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-wash);
+}
+
+.field--busy {
+  background: var(--raised);
+}
+
+.field__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: 168px;
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
+  resize: none;
+  overflow-y: auto;
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+}
+
+.field__input:focus {
+  outline: none;
+}
+
+.field__input::placeholder {
+  color: var(--muted);
+}
+
+.field__input:disabled {
+  cursor: not-allowed;
+}
+
+.send {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--signal);
+  color: var(--signal-ink);
+  cursor: pointer;
+  transition: transform 140ms var(--ease), opacity 160ms var(--ease),
+    background-color 160ms var(--ease);
+}
+
+.send:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--signal) 86%, var(--ink));
+}
+
+.send:active:not(:disabled) {
+  transform: translateY(0) scale(0.94);
+}
+
+.send:disabled {
+  background: var(--hairline-strong);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.hint {
+  margin: 9px 2px 0;
+  min-height: 17px;
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: -0.003em;
+}
+
+.hint kbd {
+  font: inherit;
+  padding: 0 4px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 4px;
+  background: var(--raised);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------
+   Responsive
+   --------------------------------------------------------------- */
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+
+  .masthead__inner {
+    padding: 11px 14px;
+  }
+
+  .masthead__title {
+    font-size: 14px;
+  }
+
+  .status {
+    padding: 3px 9px 3px 7px;
+    font-size: 12px;
+  }
+
+  .transcript__inner {
+    padding: 20px 14px 28px;
+    gap: 18px;
+  }
+
+  .bubble {
+    max-width: 86%;
+  }
+
+  .composer__inner {
+    padding: 10px 14px 12px;
+  }
+
+  .hint {
+    display: none;
+  }
+}
+
+/* Very narrow: drop the status label, keep the dot. */
+@media (max-width: 380px) {
+  .status__label {
+    display: none;
+  }
+
+  .status {
+    padding: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Inline connection notice — state reported next to the conversation,
+   not only in the far corner of the masthead. */
+.notice__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--warn);
+  animation: blink 1.1s ease-in-out infinite;
+}

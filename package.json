@@ -1,0 +1,20 @@
+{
+  "name": "resumable-realtime-conversation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/index.js",
+    "test": "node --test server/test/*.test.js",
+    "benchmark": "node scripts/benchmark.js",
+    "build": "npm --prefix client run build"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.7.5"
+  }
+}
