@@ -244,7 +244,12 @@ under Production and scale.
 
 What the submitted implementation does now: single process, single
 SQLite file, in-memory `EventEmitter` for live fan-out within that one
-process.
+process. To state it explicitly (this is what "survives a service
+restart" in the README's own words means for this implementation):
+everything in `run_events` and `runs` (SQLite) survives a restart; the
+in-memory `liveBus` used for live fan-out does not, and isn't meant to —
+any client that was connected mid-stream reconnects and replays from the
+durable log instead, exactly like any other interruption.
 
 What I'd change first for production or multi-instance scale:
 - **Move the durable event log to something multiple processes can share
