@@ -26,10 +26,9 @@ scripts/
   benchmark.js       Verification benchmark (30+ events, forced reconnect,
                       asserts zero missing / zero duplicate events)
 
-SUBMISSION.md         Not written yet — decisions doc comes after the
-                      implementation is finalized. Until then, the design
-                      rationale lives as comments in the relevant files
-                      (orchestrator/, socket/, lib/socketClient.js).
+SUBMISSION.md         The written decisions doc — architecture, technology
+                      choices, important decisions, assumptions, production
+                      notes, AI usage, and the credibility note.
 ```
 
 ## Design principle
@@ -53,19 +52,23 @@ npm run benchmark    # verification benchmark: 30+ events, one forced
 npm run build        # builds the client for production (delegates to client/)
 ```
 
+Set `STREAM_DELAY_MS` (e.g. `STREAM_DELAY_MS=300 npm run dev`) to add an
+artificial per-chunk delay to the fake generator — useful for manually
+triggering and observing the reconnect/recovery behaviour. Defaults to `0`
+(instant); tests and the benchmark never set it.
+
 ## Status
 
-Core recovery behaviour is implemented and passing: ordered live delivery,
-resume from a client cursor, replay/live merge with zero duplicates,
-restart reconciliation, generator-failure handling, and rejection of an
-unknown/stale cursor — each covered by an automated test named after its
-acceptance criterion (`npm test`), plus the standalone verification
-benchmark (`npm run benchmark`).
+Complete. Core recovery behaviour is implemented and passing: ordered live
+delivery, resume from a client cursor, replay/live merge with zero
+duplicates, restart reconciliation, generator-failure handling, and
+rejection of an unknown/stale cursor — each covered by an automated test
+named after its acceptance criterion (`npm test`), plus the standalone
+verification benchmark (`npm run benchmark`).
 
 Reconnect behaviour on the client is explicitly configured (unlimited
 attempts, capped exponential backoff with jitter) rather than left to
 library defaults — see the comment in `client/src/lib/socketClient.js`.
 
-Not yet done: `SUBMISSION.md` (the written decisions doc) and a demo
-recording. Everything else in this file describes what's actually
-implemented, not a plan.
+`SUBMISSION.md` (the written decisions doc) and the demo video are both
+complete — see `SUBMISSION.md` for the video link and full write-up.
